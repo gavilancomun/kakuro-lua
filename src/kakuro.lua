@@ -68,12 +68,27 @@ function da(d, a)
   return DownAcross:new{down = d, across = a}
 end
 
-print(e():draw())
+function drawRow(row)
+  result = ""
+  for k,v in pairs(row) do
+    result = result .. v:draw()
+  end
+  return result .."\n"
+end
 
-print(d(1):draw())
+function drawGrid(grid)
+  result = ""
+  for k,v in pairs(grid) do
+    result = result .. drawRow(v)
+  end
+  return result
+end
 
-print(a(2):draw())
+grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
+        {a(3), v(), v(), da(16, 6), v(),  v() },
+		{a(18), v(),  v(), v(), v(), v()},
+		{e(), da(17, 23),  v(), v(), v(), d(14)},
+        {a(9), v(), v(), a(6), v(), v()},
+		{a(15), v(), v(), a(12), v(), v()}}
+print(drawGrid(grid1))
 
-print(da(3, 4):draw())
-
-print(v():draw())
