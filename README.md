@@ -1,1 +1,1 @@
-"# kakuro-lua" 
+# kakuro-lua 
