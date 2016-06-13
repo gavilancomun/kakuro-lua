@@ -29,11 +29,11 @@ function filter(func, t)
 end
 
 function concat(t1, t2)
-  local t3 = {unpack(t1)}
+  local result = {unpack(t1)}
   for _,v in ipairs(t2) do
-    table.insert(t3, v)
+    table.insert(result, v)
   end
-  return t3
+  return result
 end
 
 -- kakuro solver
