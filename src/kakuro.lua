@@ -1,3 +1,41 @@
+-- utility functions
+
+function map(func, t)
+  local result = {}
+  for _,v in ipairs(t) do
+    table.insert(result, func(v))
+  end
+  return result
+end
+
+function mapn(func, ...)
+  local result = {}
+  local i = 1
+  local arg_length = table.getn(arg)
+  while true do
+    local arg_list = map(function(a) return a[i] end, arg)
+    if table.getn(arg_list) < arg_length then return result end
+    table.insert(result, func(unpack(arg_list)))
+    i = i + 1
+  end
+end
+
+function filter(func, t)
+  local result = {}
+  for _,v in ipairs(t) do
+    if func(v) then table.insert(result, v) end
+  end
+  return result
+end
+
+function concat(t1, t2)
+  local t3 = {unpack(t1)}
+  for _,v in ipairs(t2) do
+    table.insert(t3, v)
+  end
+  return t3
+end
+
 -- kakuro solver
 
 Cell = {}
@@ -40,11 +78,11 @@ function Value:draw()
   if 1 == #self.values then
     return "     " .. self.values[1] .. "    "
   else
-    local result = ""
+    local result = {}
     for k,v in ipairs(self.values) do
-	  result = result .. (v and k or ".")
+	  table.insert(result, (v and k or "."))
 	end
-	return result
+	return table.concat(result, "")
   end
 end
 
@@ -69,19 +107,12 @@ function da(d, a)
 end
 
 function drawRow(row)
-  local result = ""
-  for _,v in ipairs(row) do
-    result = result .. v:draw()
-  end
-  return result .. "\n"
+  local result = map(function (v) return v:draw() end, row)
+  return table.concat(result, "") .. "\n"
 end
 
 function drawGrid(grid)
-  local result = ""
-  for _,v in ipairs(grid) do
-    result = result .. drawRow(v)
-  end
-  return result
+  return table.concat(map(drawRow, grid), "")
 end
 
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
