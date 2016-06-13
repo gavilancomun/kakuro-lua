@@ -47,7 +47,6 @@ function Cell:new(o)
   return o
 end
 
-
 Empty = Cell:new()
 
 function Empty:draw()
@@ -116,7 +115,7 @@ function drawGrid(grid)
 end
 
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
-         {a(3), v(), v(), da(16, 6), v(),  v() },
+         {a(3), v(), v(), da(16, 6), v(), v()},
 	 	 {a(18), v(),  v(), v(), v(), v()},
 		 {e(), da(17, 23),  v(), v(), v(), d(14)},
          {a(9), v(), v(), a(6), v(), v()},
