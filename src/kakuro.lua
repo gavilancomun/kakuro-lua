@@ -37,12 +37,12 @@ end
 Value = Cell:new()
 
 function Value:draw()
-  if 1 == table.getn(self.values) then
+  if 1 == #self.values then
     return "     " .. self.values[1] .. "    "
   else
-    result = ""
-    for i = 1, 9 do
-	  result = result .. ((self.values[i]) and i or ".")
+    local result = ""
+    for k,v in ipairs(self.values) do
+	  result = result .. (v and k or ".")
 	end
 	return result
   end
@@ -69,16 +69,16 @@ function da(d, a)
 end
 
 function drawRow(row)
-  result = ""
-  for k,v in pairs(row) do
+  local result = ""
+  for _,v in ipairs(row) do
     result = result .. v:draw()
   end
-  return result .."\n"
+  return result .. "\n"
 end
 
 function drawGrid(grid)
-  result = ""
-  for k,v in pairs(grid) do
+  local result = ""
+  for _,v in ipairs(grid) do
     result = result .. drawRow(v)
   end
   return result
@@ -90,5 +90,6 @@ grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
 		 {e(), da(17, 23),  v(), v(), v(), d(14)},
          {a(9), v(), v(), a(6), v(), v()},
 		 {a(15), v(), v(), a(12), v(), v()}}
+
 print(drawGrid(grid1))
 
