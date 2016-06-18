@@ -36,6 +36,44 @@ function concat(t1, t2)
   return result
 end
 
+-- https://coronalabs.com/blog/2014/09/02/tutorial-printing-table-contents/
+
+function print_r (t)  
+    local print_r_cache={}
+    local function sub_print_r(t,indent)
+        if (print_r_cache[tostring(t)]) then
+            print(indent.."*"..tostring(t))
+        else
+            print_r_cache[tostring(t)]=true
+            if (type(t)=="table") then
+                for pos,val in pairs(t) do
+                    if (type(val)=="table") then
+                        print(indent.."["..pos.."] => "..tostring(t).." {")
+                        sub_print_r(val,indent..string.rep(" ",string.len(pos)+8))
+                        print(indent..string.rep(" ",string.len(pos)+6).."}")
+                    elseif (type(val)=="string") then
+                        print(indent.."["..pos..'] => "'..val..'"')
+                    else
+                        print(indent.."["..pos.."] => "..tostring(val))
+                    end
+                end
+            else
+                print(indent..tostring(t))
+            end
+        end
+    end
+    if (type(t)=="table") then
+        print(tostring(t).." {")
+        sub_print_r(t,"  ")
+        print("}")
+    else
+        sub_print_r(t,"  ")
+    end
+    print()
+end
+
+--
+
 -- kakuro solver
 
 Cell = {}
@@ -114,20 +152,47 @@ function drawGrid(grid)
   return table.concat(map(drawRow, grid), "")
 end
 
-function uniqueCount(list)
+function toSet(list)
   local set = {}
   for k,v in pairs(list) do
     set[v] = true
   end
-  local count = 0
-  for k,v in pairs(set) do
-    count = count + 1
+  return set
+end
+
+function setAsList(set)
+  local result = {}
+  for k, v in pairs(set) do
+    table.insert(result, k)
   end
-  return count
+  return result
+end
+
+function uniqueCount(list)
+  return #setAsList(toSet(list))
 end
 
 function allDifferent(nums)
   return #nums == uniqueCount(nums)
+end
+
+function conj(first, second)
+  local result = {unpack(first)}
+  for k,v in pairs(second) do
+    table.insert(result, v)
+  end
+  return result
+end
+
+function permute(vs, target, soFar)
+  if (target >= 1) then
+    if #soFar == (#vs - 1) then
+      return {conj(soFar, target)}
+    else
+    end
+  else
+    return {}
+  end
 end
 
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
@@ -140,7 +205,15 @@ grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
 print(drawGrid(grid1))
 
 diffs = {1, 3, 3, 5}
-print(#diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+print_r(toSet(diffs))
+print_r(setAsList(toSet(diffs)))
+
+print("diffs ", #diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
 table.remove(diffs, 2)
-print(#diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+print("diffs ", #diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+
+print("\nconj")
+t1 = {1, 2, 3}
+t2 = {4, 5, 6, 7}
+print_r(conj(t1, t2))
 
