@@ -173,13 +173,27 @@ function uniqueCount(list)
 end
 
 function allDifferent(nums)
-  return #nums == uniqueCount(nums)
+  return #nums == #setAsList(toSet(nums))
 end
 
 function conj(first, second)
+  local result = {unpack(first)} 
+  table.insert(result, second)
+  return result
+end
+
+function concatLists(first, second)
   local result = {unpack(first)}
   for k,v in pairs(second) do
     table.insert(result, v)
+  end
+  return result
+end
+
+function flatten1(listOfLists)
+  local result = {}
+  for k, v in pairs(listOfLists) do
+    result = concatLists(result, v) 
   end
   return result
 end
@@ -189,10 +203,40 @@ function permute(vs, target, soFar)
     if #soFar == (#vs - 1) then
       return {conj(soFar, target)}
     else
+      local step1 = vs[#soFar + 1]
+      local step2 = step1.values
+      local step3 = map(function (n)
+                          return permute(vs, (target - n), conj(soFar, n))
+                        end, step2)
+      return flatten1(step3)
     end
   else
     return {}
   end
+end
+
+function permuteAll(vs, total)
+  return permute(vs, total, {})
+end
+
+function containsKey(list, value)
+  local result = false
+  for k, v in pairs(list) do
+    if k == value then
+      return true
+    end
+  end
+  return result
+end
+
+function containsValue(list, value)
+  local result = false
+  for k, v in pairs(list) do
+    if v == value then
+      return true
+    end
+  end
+  return result
 end
 
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
@@ -204,16 +248,26 @@ grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
 
 print(drawGrid(grid1))
 
+t1 = {1, 2, 3}
+t2 = {4, 5, 6, 7}
 diffs = {1, 3, 3, 5}
+
+print("conj")
+print_r(conj({}, 9))
+print_r(conj(t1, 9))
+
 print_r(toSet(diffs))
 print_r(setAsList(toSet(diffs)))
 
-print("diffs ", #diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+print("diffs ", #diffs, " ", allDifferent(diffs))
 table.remove(diffs, 2)
-print("diffs ", #diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+print("diffs ", #diffs, " ", allDifferent(diffs))
 
-print("\nconj")
-t1 = {1, 2, 3}
-t2 = {4, 5, 6, 7}
-print_r(conj(t1, t2))
+print("\nconcat")
+print_r(concatLists(t1, t2))
+print("\nflatten")
+print_r(flatten1({t1, t2}))
 
+print("permute")
+print_r(permuteAll({v(), v()}, 11))
+print_r(permuteAll({v(), v(), v()}, 11))
