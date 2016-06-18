@@ -114,6 +114,22 @@ function drawGrid(grid)
   return table.concat(map(drawRow, grid), "")
 end
 
+function uniqueCount(list)
+  local set = {}
+  for k,v in pairs(list) do
+    set[v] = true
+  end
+  local count = 0
+  for k,v in pairs(set) do
+    count = count + 1
+  end
+  return count
+end
+
+function allDifferent(nums)
+  return #nums == uniqueCount(nums)
+end
+
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
          {a(3), v(), v(), da(16, 6), v(), v()},
          {a(18), v(),  v(), v(), v(), v()},
@@ -122,4 +138,9 @@ grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
          {a(15), v(), v(), a(12), v(), v()}}
 
 print(drawGrid(grid1))
+
+diffs = {1, 3, 3, 5}
+print(#diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
+table.remove(diffs, 2)
+print(#diffs, " ", uniqueCount(diffs), " ", allDifferent(diffs))
 
