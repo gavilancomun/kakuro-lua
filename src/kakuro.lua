@@ -194,6 +194,42 @@ function flatten1(listOfLists)
   return result
 end
 
+function take(n, array)
+  local result = {}
+  i = 1
+  for k, v in pairs(array) do
+    if i <= n then
+      table.insert(result, v)
+    end
+    i = i + 1
+  end
+  return result
+end
+
+function drop(n, array)
+  local result = {}
+  i = 1
+  for k, v in pairs(array) do
+    if (i > n) then
+      table.insert(result, v)
+    end
+    i = i + 1
+  end
+  return result
+end
+
+function takeWhile(f, array)
+  local result = {}
+  for k, v in pairs(array) do
+    if f(v) then
+      table.insert(result, v)
+    else
+      return result
+    end
+  end
+  return result
+end
+
 function permute(vs, target, soFar)
   if (target >= 1) then
     if #soFar == (#vs - 1) then
@@ -246,6 +282,55 @@ function transpose(m)
   return result
 end
 
+function partitionBy(f, coll)
+  if (nil == coll) or (0 == #coll) then
+    return {}
+  else
+    local head = coll[1]
+    local fx = f(head)
+    local group = takeWhile(function (y)
+                            return fx == f(y)
+                          end, coll)
+    return concatLists({group}, partitionBy(f, drop(#group, coll)))
+  end
+end
+
+function partitionAll(n, step, coll)
+  if (nil == coll) or (0 == #coll) then
+    return {}
+  else
+    return concatLists({take(n, coll)}, partitionAll(n, step, drop(step, coll)))
+  end
+end
+
+function partitionN(n, coll)
+  return partitionAll(n, n, coll)
+end
+
+function solveStep(cells, total)
+  local final = #cells
+  local perms1 = permuteAll(cells, total)
+  local perms2 = filter(function (v)
+                          return isPossible(cells[final], v[final])
+                        end,  perms1)
+  local perms3 = filter(allDifferent, perms2)
+  local perms4 = transpose(perms3)
+  return map(function (v)
+               return Value:new{values = v}
+             end, perms4)
+end
+
+function solvePair(k, p)
+  local nvs = p[1]
+  local vs = p[2]
+  if 0 == #vs then
+    return nvs
+  else 
+    return concat(nvs,
+                  solveStep(vs, nvs[#nvs][k]))
+  end
+end
+
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
          {a(3), v(), v(), da(16, 6), v(), v()},
          {a(18), v(),  v(), v(), v(), v()},
@@ -284,3 +369,8 @@ m = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}, {4, 4, 4}}
 print("transpose")
 print_r(m)
 print_r(transpose(m))
+
+print "partition"
+print_r(partitionN(2, {1, 2, 3, 4, 5, 6}))
+print_r(partitionBy(function (n) return 2 * n < 10 end, {1, 2, 3, 4, 5, 6}))
+
