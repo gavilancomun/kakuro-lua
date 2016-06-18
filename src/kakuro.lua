@@ -168,10 +168,6 @@ function setAsList(set)
   return result
 end
 
-function uniqueCount(list)
-  return #setAsList(toSet(list))
-end
-
 function allDifferent(nums)
   return #nums == #setAsList(toSet(nums))
 end
@@ -239,6 +235,17 @@ function containsValue(list, value)
   return result
 end
 
+function isPossible(cell, n) 
+  return containsValue(cell.values, n)
+end
+
+function transpose(m)
+  result = mapn(function (...)
+                  return {...}
+                end, unpack(m))
+  return result
+end
+
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
          {a(3), v(), v(), da(16, 6), v(), v()},
          {a(18), v(),  v(), v(), v(), v()},
@@ -271,3 +278,9 @@ print_r(flatten1({t1, t2}))
 print("permute")
 print_r(permuteAll({v(), v()}, 11))
 print_r(permuteAll({v(), v(), v()}, 11))
+print_r(filter(allDifferent, permuteAll({v(), v(), v()}, 11)))
+
+m = {{1, 1, 1}, {2, 2, 2}, {3, 3, 3}, {4, 4, 4}}
+print("transpose")
+print_r(m)
+print_r(transpose(m))
