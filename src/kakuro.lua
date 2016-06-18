@@ -326,10 +326,41 @@ function solvePair(k, p)
   if 0 == #vs then
     return nvs
   else 
-    return concat(nvs,
-                  solveStep(vs, nvs[#nvs][k]))
+    return concatLists(nvs,
+                       solveStep(vs, nvs[#nvs][k]))
   end
 end
+
+function solveLine(line, pairSolver)
+  local pairs = partitionAll(2,  partitionBy(function (v) return v.values end, line))
+  local step1 = map(pairSolver, pairs)
+  return flatten1(step1)
+end
+
+function solveRow(row)
+  return solveLine(row, function (v) return solvePair(function (x) return x.across end, v) end)
+end
+
+function solveColumn(column)
+  return solveLine(column, function (v) return solvePair(function (x) return x.down end, v) end)
+end
+
+function solveGrid(grid)
+  local step1 = map(solveRow, grid)
+  local step2 = transpose(step1)
+  local step3 = map(solveColumn(step2))
+  return transpose(step3)
+end
+
+function solver(grid)
+  local g = solveGrid(grid)
+    if g == grid then
+      return g
+    else
+     print(drawGrid(g))
+     return solver(g)
+   end
+ end
 
 grid1 = {{e(), d(4), d(22), e(), d(16), d(3)},
          {a(3), v(), v(), da(16, 6), v(), v()},
@@ -373,4 +404,6 @@ print_r(transpose(m))
 print "partition"
 print_r(partitionN(2, {1, 2, 3, 4, 5, 6}))
 print_r(partitionBy(function (n) return 2 * n < 10 end, {1, 2, 3, 4, 5, 6}))
+
+print(drawGrid(solver(grid1)))
 
