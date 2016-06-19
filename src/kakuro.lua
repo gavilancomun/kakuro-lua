@@ -93,7 +93,7 @@ function equals(o1, o2, ignore_mt)
 
     for key1, value1 in pairs(o1) do
         local value2 = o2[key1]
-        if value2 == nil or equals(value1, value2, ignore_mt) == false then
+        if (value2 == nil) or equals(value1, value2, ignore_mt) == false then
             return false
         end
         keySet[key1] = true
@@ -156,8 +156,13 @@ function Value:draw()
   end
 end
 
-function v()
-  return Value:new{values = {1, 2, 3, 4, 5, 6, 7, 8, 9}}
+function v(...)
+  local vs = {...}
+  if 0 == #vs then
+    return Value:new{values = {1, 2, 3, 4, 5, 6, 7, 8, 9}}
+  else
+    return Value:new{values = vs}
+  end
 end
 
 function e()
@@ -174,6 +179,10 @@ end
 
 function da(d, a)
   return DownAcross:new{down = d, across = a}
+end
+
+function isEmpty(t)
+  return (nil == t) or (0 == #t)
 end
 
 function drawRow(row)
@@ -315,7 +324,7 @@ function transpose(m)
 end
 
 function partitionBy(f, coll)
-  if (nil == coll) or (0 == #coll) then
+  if isEmpty(coll) then
     return {}
   else
     local head = coll[1]
@@ -328,7 +337,7 @@ function partitionBy(f, coll)
 end
 
 function partitionAll(n, step, coll)
-  if (nil == coll) or (0 == #coll) then
+  if isEmpty(coll) then
     return {}
   else
     return concatLists({take(n, coll)}, partitionAll(n, step, drop(step, coll)))
@@ -352,21 +361,29 @@ function solveStep(cells, total)
              end, perms4)
 end
 
-function solvePair(k, p)
+function solvePair(f, p)
   local nvs = p[1]
   local vs = p[2]
-  if 0 == #vs then
+  if isEmpty(vs) then
     return nvs
   else 
     return concatLists(nvs,
-                       solveStep(vs, nvs[#nvs][k]))
+                       solveStep(vs, f(nvs[#nvs])))
   end
+end
+
+function gatherValues(line)
+  return partitionBy(function (v) return nil ~= v.values end, line)
+end
+
+function pairTargetsWithValues(line)
+  return partitionN(2, gatherValues(line))
 end
 
 function solveLine(line, pairSolver)
   print("solveLine ")
   print_r(line)
-  local pairs = partitionAll(2,  partitionBy(function (v) return v.values end, line))
+  local pairs = pairTargetsWithValues(line)
   local step1 = map(pairSolver, pairs)
   return flatten1(step1)
 end
@@ -435,9 +452,24 @@ print("transpose")
 print_r(m)
 print_r(transpose(m))
 
-print "partition"
+print "partitionAll"
+print_r(partitionAll(2, 2, {1, 1, 2, 2, 3, 3}))
+print "partitionN"
 print_r(partitionN(2, {1, 2, 3, 4, 5, 6}))
+print "partitionBy"
 print_r(partitionBy(function (n) return 2 * n < 10 end, {1, 2, 3, 4, 5, 6}))
 
+print "solveStep"
+print_r(solveStep({v(1, 2), v()}, 5))
+
+row = {a(3), v(), v(), a(5), v(), v()}
+print "gather values"
+print_r(gatherValues(row))
+print "pair targets with values"
+print_r(pairTargetsWithValues(row))
+print "solveRow"
+print_r(solveRow(row))
+
+print "solver"
 print(drawGrid(solver(grid1)))
 
