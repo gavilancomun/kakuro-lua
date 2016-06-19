@@ -357,7 +357,7 @@ function solveStep(cells, total)
   local perms3 = filter(allDifferent, perms2)
   local perms4 = transpose(perms3)
   return map(function (v)
-               return Value:new{values = v}
+               return Value:new{values = setAsList(toSet(v))}
              end, perms4)
 end
 
@@ -381,8 +381,6 @@ function pairTargetsWithValues(line)
 end
 
 function solveLine(line, pairSolver)
-  print("solveLine ")
-  print_r(line)
   local pairs = pairTargetsWithValues(line)
   local step1 = map(pairSolver, pairs)
   return flatten1(step1)
@@ -398,8 +396,14 @@ end
 
 function solveGrid(grid)
   local step1 = map(solveRow, grid)
+  print "step 1"
+  print_r(step1)
   local step2 = transpose(step1)
+  print "step 2"
+  print_r(step2)
   local step3 = map(solveColumn, step2)
+  print "step 3"
+  print_r(step3)
   return transpose(step3)
 end
 
