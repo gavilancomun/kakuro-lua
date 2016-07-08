@@ -28,10 +28,60 @@ function filter(func, t)
   return result
 end
 
-function concat(t1, t2)
-  local result = {unpack(t1)}
-  for _,v in ipairs(t2) do
+function conj(first, second)
+  local result = {unpack(first)} 
+  table.insert(result, second)
+  return result
+end
+
+function concatLists(first, second)
+  local result = {unpack(first)}
+  for k,v in pairs(second) do
     table.insert(result, v)
+  end
+  return result
+end
+
+function flatten1(listOfLists)
+  local result = {}
+  for k, v in pairs(listOfLists) do
+    result = concatLists(result, v) 
+  end
+  return result
+end
+
+function take(n, array)
+  local result = {}
+  i = 1
+  for k, v in pairs(array) do
+    if i <= n then
+      table.insert(result, v)
+    end
+    i = i + 1
+  end
+  return result
+end
+
+function drop(n, array)
+  local result = {}
+  i = 1
+  for k, v in pairs(array) do
+    if (i > n) then
+      table.insert(result, v)
+    end
+    i = i + 1
+  end
+  return result
+end
+
+function takeWhile(f, array)
+  local result = {}
+  for k, v in pairs(array) do
+    if f(v) then
+      table.insert(result, v)
+    else
+      return result
+    end
   end
   return result
 end
@@ -212,64 +262,6 @@ end
 
 function allDifferent(nums)
   return #nums == #setAsList(toSet(nums))
-end
-
-function conj(first, second)
-  local result = {unpack(first)} 
-  table.insert(result, second)
-  return result
-end
-
-function concatLists(first, second)
-  local result = {unpack(first)}
-  for k,v in pairs(second) do
-    table.insert(result, v)
-  end
-  return result
-end
-
-function flatten1(listOfLists)
-  local result = {}
-  for k, v in pairs(listOfLists) do
-    result = concatLists(result, v) 
-  end
-  return result
-end
-
-function take(n, array)
-  local result = {}
-  i = 1
-  for k, v in pairs(array) do
-    if i <= n then
-      table.insert(result, v)
-    end
-    i = i + 1
-  end
-  return result
-end
-
-function drop(n, array)
-  local result = {}
-  i = 1
-  for k, v in pairs(array) do
-    if (i > n) then
-      table.insert(result, v)
-    end
-    i = i + 1
-  end
-  return result
-end
-
-function takeWhile(f, array)
-  local result = {}
-  for k, v in pairs(array) do
-    if f(v) then
-      table.insert(result, v)
-    else
-      return result
-    end
-  end
-  return result
 end
 
 function permute(vs, target, soFar)
