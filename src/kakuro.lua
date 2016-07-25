@@ -189,7 +189,7 @@ end
 DownAcross = Cell:new()
 
 function DownAcross:draw()
-  return string.format("   --\\%2d  ", self.down, self.across)
+  return string.format("   %2d\\%2d  ", self.down, self.across)
 end
 
 Value = Cell:new()
