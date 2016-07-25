@@ -372,18 +372,18 @@ function pairTargetsWithValues(line)
   return partitionN(2, gatherValues(line))
 end
 
-function solveLine(line, pairSolver)
+function solveLine(line, f)
   local pairs = pairTargetsWithValues(line)
-  local step1 = map(pairSolver, pairs)
+  local step1 = map(function(x) return solvePair(f, x) end, pairs)
   return flatten1(step1)
 end
 
 function solveRow(row)
-  return solveLine(row, function (v) return solvePair(function (x) return x.across end, v) end)
+  return solveLine(row, function (x) return x.across end)
 end
 
 function solveColumn(column)
-  return solveLine(column, function (v) return solvePair(function (x) return x.down end, v) end)
+  return solveLine(column, function (x) return x.down end)
 end
 
 function solveGrid(grid)
